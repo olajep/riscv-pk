@@ -2,7 +2,7 @@
 
 #ifndef __riscv_muldiv
 
-#if __riscv_xlen == 64
+#ifdef __riscv64
 typedef __int128 double_int;
 #else
 typedef int64_t double_int;
@@ -37,7 +37,7 @@ DECLARE_EMULATION_FUNC(emulate_mul_div)
   SET_RD(insn, regs, val);
 }
 
-#if __riscv_xlen == 64
+#ifdef __riscv64
 
 DECLARE_EMULATION_FUNC(emulate_mul_div32)
 {

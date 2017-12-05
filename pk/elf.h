@@ -12,7 +12,7 @@
 #define IS_ELF32(hdr) (IS_ELF(hdr) && (hdr).e_ident[4] == 1)
 #define IS_ELF64(hdr) (IS_ELF(hdr) && (hdr).e_ident[4] == 2)
 
-#if __riscv_xlen == 64
+#ifdef __riscv64
 # define Elf_Ehdr Elf64_Ehdr
 # define Elf_Phdr Elf64_Phdr
 #else
