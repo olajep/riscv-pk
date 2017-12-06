@@ -20,6 +20,10 @@ void uart_send(uint8_t data) {
 	// wait until THR empty
 	while((*(uart_base_ptr + UART_STAT_REG) & 0x08));
 	*(uart_base_ptr + UART_TX_FIFO_REG) = data;
+
+  if (data == '\n') {
+    uart_send('\r');
+  }
 }
 
 void uart_send_string(const char *str) {
