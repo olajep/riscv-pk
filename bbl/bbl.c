@@ -57,7 +57,9 @@ static void supervisor_vm_init()
 void boot_loader()
 {
   extern char _payload_start, _payload_end;
+  printm("load_kernel_elf...\n");
   load_kernel_elf(&_payload_start, &_payload_end - &_payload_start, &info);
+  printm("supervisor_vm_init...\n");
   supervisor_vm_init();
 #ifdef PK_ENABLE_LOGO
   print_logo();
