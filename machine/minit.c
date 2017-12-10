@@ -133,13 +133,21 @@ static void hart_plic_init()
 void init_first_hart()
 {
   uart_init();
+  printm("BBL build time %s, %s\n", __TIME__, __DATE__);
+  printm("hart_init...\n");
   hart_init();
+  printm("hls_init...\n");
   hls_init(0); // this might get called again from parse_config_string
+  printm("parse_config_string...\n");
   parse_config_string();
+  printm("plic_init...\n");
   plic_init();
+  printm("hart_plic_init...\n");
   hart_plic_init();
   //prci_test();
+  printm("memory_init...\n");
   memory_init();
+  printm("boot_loader...\n");
   boot_loader();
 }
 

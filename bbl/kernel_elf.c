@@ -37,8 +37,11 @@ void load_kernel_elf(void* blob, size_t size, kernel_elf_info* info)
         max_vaddr = vaddr + ph[i].p_memsz;
       if (ph[i].p_offset + ph[i].p_filesz > size)
         goto fail;
+      printm("memcpy %ld bytes, src %lx, dest %lx\n", ph[i].p_filesz, vaddr, blob + ph[i].p_offset);
       memcpy((void*)vaddr, blob + ph[i].p_offset, ph[i].p_filesz);
+      printm("zeroing %ld bytes, dest %lx\n", prepad, (void *)vaddr - prepad);
       memset((void*)vaddr - prepad, 0, prepad);
+      printm("zeroing %ld bytes, dest %lx\n", ph[i].p_memsz - ph[i].p_filesz, (void *)vaddr + ph[i].p_filesz);
       memset((void*)vaddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
     }
   }
