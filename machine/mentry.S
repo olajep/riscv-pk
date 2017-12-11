@@ -31,6 +31,11 @@ trap_table:
 reset_vector:
   j do_reset
 
+  .align 3
+  .globl configstr
+configstr:
+  .fill 0x1000
+
 nmi_vector:
 .Lunhandleable_trap:
   j bad_trap

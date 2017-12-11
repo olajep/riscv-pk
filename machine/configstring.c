@@ -93,8 +93,19 @@ static void query_harts(const char* config_string)
 
 void parse_config_string()
 {
-  uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
-  const char* s = (const char*)(uintptr_t)addr;
+  extern char configstr;
+  const char *s;
+  if (configstr != '\0') {
+    printm("Using external configure string\n");
+    s = &configstr;
+  }
+  else {
+    printm("Using default configure string in bootrom\n");
+    uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
+    s = (const char*)(uintptr_t)addr;
+  }
+  putstring(s);
+
   query_mem(s);
   query_plic(s);
   query_rtc(s);
