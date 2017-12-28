@@ -12,6 +12,9 @@
 #define MCALL_REMOTE_SFENCE_VM 8
 #define MCALL_REMOTE_FENCE_I 9
 
+#define MCALL_CONFIG_STRING_BASE 10
+#define MCALL_CONFIG_STRING_SIZE 11
+
 #ifndef __ASSEMBLER__
 
 extern uintptr_t do_mcall(uintptr_t which, ...);
