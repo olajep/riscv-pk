@@ -24,6 +24,9 @@ void sbi_remote_sfence_vm(unsigned long hart_mask_ptr, unsigned long asid);
 void sbi_remote_sfence_vm_range(unsigned long hart_mask_ptr, unsigned long asid, unsigned long start, unsigned long size);
 void sbi_remote_fence_i(unsigned long hart_mask_ptr);
 
+unsigned long sbi_cp_reg_r(unsigned long idx,unsigned long proc_id);
+void sbi_cp_reg_w(unsigned long idx,unsigned long proc_id,unsigned long val);
+
 unsigned long sbi_mask_interrupt(unsigned long which);
 unsigned long sbi_unmask_interrupt(unsigned long which);
 

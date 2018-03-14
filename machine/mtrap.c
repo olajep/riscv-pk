@@ -198,10 +198,23 @@ static uintptr_t mcall_remote_fence_i(uintptr_t* hart_mask)
   send_ipi_many(hart_mask, IPI_FENCE_I);
   return 0;
 }
+#define PROC_DSID_BITS 3
+static uintptr_t mcall_cp_reg_r(uintptr_t idx,uintptr_t proc_id)
+{
+	uint32_t * cp_base = 0x900;
+	return cp_base[idx * (1<<PROC_DSID_BITS)+proc_id];
+}
+
+static uintptr_t mcall_cp_reg_w(uintptr_t idx,uintptr_t proc_id,uintptr_t val)
+{
+	uint32_t * cp_base = 0x900;
+	cp_base[idx * (1<<PROC_DSID_BITS)+proc_id] = val;
+	return 0;
+}
 
 void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 {
-  uintptr_t n = regs[17], arg0 = regs[10], arg1 = regs[11], retval;
+  uintptr_t n = regs[17], arg0 = regs[10], arg1 = regs[11], arg2 = regs[12] , retval;
   switch (n)
   {
     case MCALL_HART_ID:
@@ -238,7 +251,13 @@ void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
     case MCALL_REMOTE_FENCE_I:
       retval = mcall_remote_fence_i((uintptr_t*)arg0);
       break;
-    default:
+	case MCALL_CP_REG_R:
+	  retval = mcall_cp_reg_r(arg0,arg1);
+	  break;
+	case MCALL_CP_REG_W:
+      retval = mcall_cp_reg_w(arg0,arg1,arg2);
+	  break;
+	default:
       retval = -ENOSYS;
       break;
   }

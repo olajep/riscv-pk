@@ -96,6 +96,18 @@ sbi_base:
   ecall
   ret
 
+  # cp_reg_r
+  .align 4
+  li a7, MCALL_CP_REG_R
+  ecall
+  ret
+
+  # cp_reg_w
+  .align 4
+  li a7, MCALL_CP_REG_W
+  ecall
+  ret
+
   # end of SBI trampolines
 
   .globl do_mcall
