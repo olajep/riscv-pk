@@ -199,15 +199,16 @@ static uintptr_t mcall_remote_fence_i(uintptr_t* hart_mask)
   return 0;
 }
 #define PROC_DSID_BITS 3
+uint32_t *cp_base = (uint32_t*) 0x900;
 static uintptr_t mcall_cp_reg_r(uintptr_t idx,uintptr_t proc_id)
 {
-	uint32_t * cp_base = 0x900;
+	//uint32_t * cp_base;
 	return cp_base[idx * (1<<PROC_DSID_BITS)+proc_id];
 }
 
 static uintptr_t mcall_cp_reg_w(uintptr_t idx,uintptr_t proc_id,uintptr_t val)
 {
-	uint32_t * cp_base = 0x900;
+	//uint32_t * cp_base = 0x900;
 	cp_base[idx * (1<<PROC_DSID_BITS)+proc_id] = val;
 	return 0;
 }
