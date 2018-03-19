@@ -13,6 +13,7 @@
 .globl sbi_remote_sfence_vm; sbi_remote_sfence_vm = -1840
 .globl sbi_remote_sfence_vm_range; sbi_remote_sfence_vm_range = -1824
 .globl sbi_remote_fence_i; sbi_remote_fence_i = -1808
-
-.globl sbi_cp_reg_r; sbi_cp_reg_r = -1792
-.globl sbi_cp_reg_w; sbi_cp_reg_w = -1776
+.globl config_string_base; config_string_base = -1792
+.globl config_string_size; config_string_size = -1776
+.globl sbi_cp_reg_r; sbi_cp_reg_r = -1760
+.globl sbi_cp_reg_w; sbi_cp_reg_w = -1744

@@ -96,12 +96,21 @@ sbi_base:
   ecall
   ret
 
+  # config_string_base
+  .align 4
+  li a7, MCALL_CONFIG_STRING_BASE
+  ecall
+  ret
+  # config_string_size
+  .align 4
+  li a7, MCALL_CONFIG_STRING_SIZE
+  ecall
+  ret 
   # cp_reg_r
   .align 4
   li a7, MCALL_CP_REG_R
   ecall
   ret
-
   # cp_reg_w
   .align 4
   li a7, MCALL_CP_REG_W

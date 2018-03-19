@@ -213,6 +213,37 @@ static uintptr_t mcall_cp_reg_w(uintptr_t idx,uintptr_t proc_id,uintptr_t val)
 	return 0;
 }
 
+static uintptr_t mcall_config_string_base(uintptr_t offset)
+{
+  extern char configstr;
+  char *s;
+  if (configstr != '\0') {
+	s = &configstr;
+  }
+  else{
+	uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
+	s = (char*)(uintptr_t)addr;
+  }
+  return s[offset];
+}
+static uintptr_t mcall_config_string_size(void)
+{
+  extern char configstr;
+  char *s;
+  if (configstr != '\0') {
+	s = &configstr;
+  }
+  else{
+	uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
+	s = (char*)(uintptr_t)addr;
+  }
+  char *p = s;
+  while (*p)
+   p++;
+  return p-s; 
+}
+
+
 void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 {
   uintptr_t n = regs[17], arg0 = regs[10], arg1 = regs[11], arg2 = regs[12] , retval;
@@ -252,13 +283,19 @@ void mcall_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
     case MCALL_REMOTE_FENCE_I:
       retval = mcall_remote_fence_i((uintptr_t*)arg0);
       break;
+	case MCALL_CONFIG_STRING_BASE:
+	  retval = mcall_config_string_base(arg0);
+	  break;
+	case MCALL_CONFIG_STRING_SIZE:
+	  retval = mcall_config_string_size();
+	  break;
 	case MCALL_CP_REG_R:
 	  retval = mcall_cp_reg_r(arg0,arg1);
 	  break;
 	case MCALL_CP_REG_W:
       retval = mcall_cp_reg_w(arg0,arg1,arg2);
 	  break;
-	default:
+    default:
       retval = -ENOSYS;
       break;
   }
