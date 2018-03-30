@@ -14,6 +14,8 @@
 
 #define MCALL_CONFIG_STRING_BASE 10
 #define MCALL_CONFIG_STRING_SIZE 11
+#define MCALL_CP_REG_R 12
+#define MCALL_CP_REG_W 13
 
 #ifndef __ASSEMBLER__
 

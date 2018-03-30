@@ -106,6 +106,16 @@ sbi_base:
   li a7, MCALL_CONFIG_STRING_SIZE
   ecall
   ret 
+  # cp_reg_r
+  .align 4
+  li a7, MCALL_CP_REG_R
+  ecall
+  ret
+  # cp_reg_w
+  .align 4
+  li a7, MCALL_CP_REG_W
+  ecall
+  ret
 
   # end of SBI trampolines
 
@@ -114,6 +124,7 @@ do_mcall:
   mv a7, a0
   mv a0, a1
   mv a1, a2
+  mv a2, a3
   ecall
   ret
 
