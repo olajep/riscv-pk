@@ -73,6 +73,7 @@ void boot_other_hart()
 {
   while (!elf_loaded)
     ;
+  printm("booting hart %d\n", read_const_csr(mhartid));
   mb();
   enter_supervisor_mode((void *)info.entry, 0);
 }
