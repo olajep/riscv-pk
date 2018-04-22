@@ -153,6 +153,7 @@ void init_first_hart()
 
 void init_other_hart()
 {
+  printm("initializing hart %d\n", read_const_csr(mhartid));
   hart_init();
   hart_plic_init();
   boot_other_hart();
