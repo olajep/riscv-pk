@@ -9,62 +9,62 @@ void illegal_insn_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 {
   asm (".pushsection .rodata\n"
        "illegal_insn_trap_table:\n"
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #if !defined(__riscv_flen) && defined(PK_ENABLE_FP_EMULATION)
-       "  .word emulate_float_load\n"
+       "  .quad emulate_float_load\n"
 #else
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #endif
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #if !defined(__riscv_flen) && defined(PK_ENABLE_FP_EMULATION)
-       "  .word emulate_float_store\n"
+       "  .quad emulate_float_store\n"
 #else
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #endif
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #if !defined(__riscv_muldiv)
-       "  .word emulate_mul_div\n"
+       "  .quad emulate_mul_div\n"
 #else
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #endif
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #if !defined(__riscv_muldiv) && defined(__riscv64)
-       "  .word emulate_mul_div32\n"
+       "  .quad emulate_mul_div32\n"
 #else
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #endif
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #ifdef PK_ENABLE_FP_EMULATION
-       "  .word emulate_fmadd\n"
-       "  .word emulate_fmadd\n"
-       "  .word emulate_fmadd\n"
-       "  .word emulate_fmadd\n"
-       "  .word emulate_fp\n"
+       "  .quad emulate_fmadd\n"
+       "  .quad emulate_fmadd\n"
+       "  .quad emulate_fmadd\n"
+       "  .quad emulate_fmadd\n"
+       "  .quad emulate_fp\n"
 #else
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
 #endif
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word emulate_system_opcode\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
-       "  .word truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad emulate_system_opcode\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
+       "  .quad truly_illegal_insn\n"
        "  .popsection");
 
   uintptr_t mstatus;
@@ -75,8 +75,8 @@ void illegal_insn_trap(uintptr_t* regs, uintptr_t mcause, uintptr_t mepc)
 
   write_csr(mepc, mepc + 4);
 
-  extern uint32_t illegal_insn_trap_table[];
-  uint32_t* pf = (void*)illegal_insn_trap_table + (insn & 0x7c);
+  extern uintptr_t illegal_insn_trap_table[];
+  uintptr_t* pf = (void*)illegal_insn_trap_table + ((insn & 0x7c) << 1);
   emulation_func f = (emulation_func)(uintptr_t)*pf;
   f(regs, mcause, mepc, mstatus, insn);
 }
