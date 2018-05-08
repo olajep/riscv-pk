@@ -132,6 +132,7 @@ static void hart_plic_init()
 
 void init_first_hart()
 {
+  configstr_init();
   uart_init();
   printm("BBL build time %s, %s\n", __TIME__, __DATE__);
   printm("hart_init...\n");

@@ -32,8 +32,8 @@ reset_vector:
   j do_reset
 
   .align 3
-  .globl configstr
-configstr:
+  .globl extern_configstr
+extern_configstr:
   .fill 0x1000
 
 nmi_vector:

@@ -3,6 +3,7 @@
 #include "mtrap.h"
 #include "atomic.h"
 #include <stdio.h>
+#include <string.h>
 
 static void query_mem(const char* config_string)
 {
@@ -91,18 +92,35 @@ static void query_harts(const char* config_string)
   assert(num_harts <= MAX_HARTS);
 }
 
+static const char *configstr;
+extern char extern_configstr;
+
+void configstr_init() {
+  if (extern_configstr != '\0') {
+    configstr = &extern_configstr;
+  }
+  else {
+    uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
+    configstr = (const char*)(uintptr_t)addr;
+  }
+}
+
+char configstr_offset(uintptr_t offset) {
+  return configstr[offset];
+}
+
+size_t configstr_size(void) {
+  return strlen(configstr);
+}
+
 void parse_config_string()
 {
-  extern char configstr;
-  const char *s;
-  if (configstr != '\0') {
+  const char *s = configstr;
+  if (s != &extern_configstr) {
     printm("Using external configure string\n");
-    s = &configstr;
   }
   else {
     printm("Using default configure string in bootrom\n");
-    uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
-    s = (const char*)(uintptr_t)addr;
   }
   putstring(s);
 
@@ -114,18 +132,7 @@ void parse_config_string()
 
 char* parse_config_uart()
 {
-  extern char configstr;
-  const char *s;
-  if (configstr != '\0') {
-    //printm("UART Using external configure string\n");
-    s = &configstr;
-  }
-  else {
-    //printm("UART Using default configure string in bootrom\n");
-    uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
-    s = (const char*)(uintptr_t)addr;
-  }
-  query_result res = query_config_string(s, "uart{addr");
+  query_result res = query_config_string(configstr, "uart{addr");
   if (!res.start) return NULL;
   return (void*)(uintptr_t)get_uint(res);
 }
