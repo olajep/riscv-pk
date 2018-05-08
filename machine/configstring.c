@@ -111,3 +111,21 @@ void parse_config_string()
   query_rtc(s);
   query_harts(s);
 }
+
+char* parse_config_uart()
+{
+  extern char configstr;
+  const char *s;
+  if (configstr != '\0') {
+    //printm("UART Using external configure string\n");
+    s = &configstr;
+  }
+  else {
+    //printm("UART Using default configure string in bootrom\n");
+    uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
+    s = (const char*)(uintptr_t)addr;
+  }
+  query_result res = query_config_string(s, "uart{addr");
+  if (!res.start) return NULL;
+  return (void*)(uintptr_t)get_uint(res);
+}
