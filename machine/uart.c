@@ -1,10 +1,10 @@
 // See LICENSE for license details.
 
 #include "uart.h"
+#include "mtrap.h"
 
-#define UART_BASE 0x60000000
-
-#define uart_base_ptr (volatile char *)(UART_BASE)
+static volatile char* uart_base_ptr = NULL;
+extern char* parse_config_uart();
 
 #define UART_RX_FIFO_REG 0
 #define UART_TX_FIFO_REG 0x4
@@ -13,6 +13,7 @@
 
 void uart_init() {
 	// reset the receive FIFO and transmit FIFO
+	uart_base_ptr = parse_config_uart();
 	*(uart_base_ptr + UART_CTRL_REG) = 0x3;
 }
 

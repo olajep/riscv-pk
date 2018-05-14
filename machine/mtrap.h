@@ -62,6 +62,7 @@ typedef struct {
 #define OTHER_HLS(id) ((hls_t*)((void*)HLS() + RISCV_PGSIZE * ((id) - read_const_csr(mhartid))))
 
 hls_t* hls_init(uintptr_t hart_id);
+void configstr_init();
 void parse_config_string();
 void poweroff(void) __attribute((noreturn));
 void printm(const char* s, ...);

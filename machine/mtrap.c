@@ -199,34 +199,17 @@ static uintptr_t mcall_remote_fence_i(uintptr_t* hart_mask)
   return 0;
 }
 
+char configstr_offset(uintptr_t offset);
+size_t configstr_size(void);
+
 static uintptr_t mcall_config_string_base(uintptr_t offset)
 {
-  extern char configstr;
-  char *s;
-  if (configstr != '\0') {
-	s = &configstr;
-  }
-  else{
-	uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
-	s = (char*)(uintptr_t)addr;
-  }
-  return s[offset];
+  return configstr_offset(offset);
 }
+
 static uintptr_t mcall_config_string_size(void)
 {
-  extern char configstr;
-  char *s;
-  if (configstr != '\0') {
-	s = &configstr;
-  }
-  else{
-	uint32_t addr = *(uint32_t*)CONFIG_STRING_ADDR;
-	s = (char*)(uintptr_t)addr;
-  }
-  char *p = s;
-  while (*p)
-   p++;
-  return p-s; 
+  return configstr_size();
 }
 
 
