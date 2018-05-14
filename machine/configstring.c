@@ -133,6 +133,6 @@ void parse_config_string()
 char* parse_config_uart()
 {
   query_result res = query_config_string(configstr, "uart0{addr");
-  if (!res.start) return NULL;
+  assert(res.start);
   return (void*)(uintptr_t)get_uint(res);
 }
