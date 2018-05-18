@@ -167,6 +167,10 @@ void enter_supervisor_mode(void (*fn)(uintptr_t), uintptr_t stack)
   mstatus = INSERT_FIELD(mstatus, MSTATUS_MPIE, 0);
   write_csr(mstatus, mstatus);
   write_csr(mscratch, MACHINE_STACK_TOP() - MENTRY_FRAME_SIZE);
+#ifndef __riscv_flen
+  uintptr_t *p_fcsr = MACHINE_STACK_TOP() - MENTRY_FRAME_SIZE; // the x0's save slot
+  *p_fcsr = 0;
+#endif
   write_csr(mepc, fn);
   write_csr(sptbr, (uintptr_t)root_page_table >> RISCV_PGSHIFT);
   asm volatile ("mv a0, %0; mv sp, %0; mret" : : "r" (stack));
