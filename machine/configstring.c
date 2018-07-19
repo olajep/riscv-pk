@@ -116,7 +116,7 @@ size_t configstr_size(void) {
 void parse_config_string()
 {
   const char *s = configstr;
-  if (s != &extern_configstr) {
+  if (s == &extern_configstr) {
     printm("Using external configure string\n");
   }
   else {
