@@ -6,8 +6,7 @@
 #include "config.h"
 #include "fdt.h"
 #include "mtrap.h"
-
-#define NOHYPE
+#include "encoding.h"
 
 static inline int isstring(char c)
 {
@@ -283,7 +282,7 @@ void query_harts(uintptr_t fdt)
   fdt_scan(fdt, &cb);
 
   // The current hart should have been detected
-  assert ((hart_mask >> read_csr(mhartid)) != 0);
+  assert ((hart_mask >> read_csr(vhartid)) != 0);
 }
 
 ///////////////////////////////////////////// CLINT SCAN /////////////////////////////////////////

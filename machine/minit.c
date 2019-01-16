@@ -11,6 +11,7 @@
 #include "finisher.h"
 #include "disabled_hart_mask.h"
 #include "htif.h"
+#include "encoding.h"
 #include <string.h>
 #include <limits.h>
 

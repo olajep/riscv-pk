@@ -266,7 +266,7 @@ do_reset:
 
   la sp, stacks + RISCV_PGSIZE - MENTRY_FRAME_SIZE
 
-  csrr a3, mhartid
+  csrr a3, vhartid
   slli a2, a3, RISCV_PGSHIFT
   add sp, sp, a2
 

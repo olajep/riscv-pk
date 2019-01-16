@@ -20,7 +20,7 @@
 #include <stdarg.h>
 
 #define read_const_csr(reg) ({ unsigned long __tmp; \
-  asm ("csrr %0, " #reg : "=r"(__tmp)); \
+  asm ("csrr %0, " STR(reg) : "=r"(__tmp)); \
   __tmp; })
 
 static inline int supports_extension(char ext)
@@ -56,7 +56,7 @@ typedef struct {
 
 // hart-local storage, at top of stack
 #define HLS() ((hls_t*)(MACHINE_STACK_TOP() - HLS_SIZE))
-#define OTHER_HLS(id) ((hls_t*)((void*)HLS() + RISCV_PGSIZE * ((id) - read_const_csr(mhartid))))
+#define OTHER_HLS(id) ((hls_t*)((void*)HLS() + RISCV_PGSIZE * ((id) - read_const_csr(vhartid))))
 
 hls_t* hls_init(uintptr_t hart_id);
 void parse_config_string();
