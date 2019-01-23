@@ -6,6 +6,7 @@
 #include "config.h"
 #include "fdt.h"
 #include "mtrap.h"
+#include "encoding.h"
 
 static inline int isstring(char c)
 {
@@ -281,7 +282,7 @@ void query_harts(uintptr_t fdt)
   fdt_scan(fdt, &cb);
 
   // The current hart should have been detected
-  assert ((hart_mask >> read_csr(mhartid)) != 0);
+  assert ((hart_mask >> read_csr(vhartid)) != 0);
 }
 
 ///////////////////////////////////////////// CLINT SCAN /////////////////////////////////////////
@@ -291,6 +292,7 @@ struct clint_scan
   int compat;
   uint64_t reg;
   const uint32_t *int_value;
+  uint32_t nohype_index;
   int int_len;
   int done;
 };
@@ -313,6 +315,8 @@ static void clint_prop(const struct fdt_scan_prop *prop, void *extra)
   } else if (!strcmp(prop->name, "interrupts-extended")) {
     scan->int_value = prop->value;
     scan->int_len = prop->len;
+  } else if (!strcmp(prop->name, "nohype-index")) {
+    scan->nohype_index = bswap(prop->value[0]);
   }
 }
 
@@ -330,6 +334,12 @@ static void clint_done(const struct fdt_scan_node *node, void *extra)
   scan->done = 1;
   mtime = (void*)((uintptr_t)scan->reg + 0xbff8);
 
+#ifdef NOHYPE
+  // There is only one hart
+  hls_t *hls = OTHER_HLS(0);
+  hls->ipi = (void*)((uintptr_t)scan->reg + scan->nohype_index * 4);
+  hls->timecmp = (void*)((uintptr_t)scan->reg + 0x4000 + (scan->nohype_index * 8));
+#else
   for (int index = 0; end - value > 0; ++index) {
     uint32_t phandle = bswap(value[0]);
     int hart;
@@ -343,6 +353,7 @@ static void clint_done(const struct fdt_scan_node *node, void *extra)
     }
     value += 4;
   }
+#endif
 }
 
 void query_clint(uintptr_t fdt)
@@ -368,6 +379,7 @@ struct plic_scan
   int compat;
   uint64_t reg;
   uint32_t *int_value;
+  uint32_t nohype_index;
   int int_len;
   int done;
   int ndev;
@@ -393,6 +405,8 @@ static void plic_prop(const struct fdt_scan_prop *prop, void *extra)
     scan->int_len = prop->len;
   } else if (!strcmp(prop->name, "riscv,ndev")) {
     scan->ndev = bswap(prop->value[0]);
+  } else if (!strcmp(prop->name, "nohype-index")) {
+    scan->nohype_index = bswap(prop->value[0]);
   }
 }
 
@@ -417,6 +431,19 @@ static void plic_done(const struct fdt_scan_node *node, void *extra)
   plic_priorities = (uint32_t*)(uintptr_t)scan->reg;
   plic_ndevs = scan->ndev;
 
+#ifdef NOHYPE
+  hls_t *hls = OTHER_HLS(0);
+  uint32_t cpu_int = bswap(value[1]);
+  if (cpu_int == IRQ_M_EXT) {
+    hls->plic_m_ie     = (uintptr_t*)((uintptr_t)scan->reg + ENABLE_BASE + ENABLE_SIZE * scan->nohype_index);
+    hls->plic_m_thresh = (uint32_t*) ((uintptr_t)scan->reg + HART_BASE   + HART_SIZE   * scan->nohype_index);
+  } else if (cpu_int == IRQ_S_EXT) {
+    hls->plic_s_ie     = (uintptr_t*)((uintptr_t)scan->reg + ENABLE_BASE + ENABLE_SIZE * scan->nohype_index);
+    hls->plic_s_thresh = (uint32_t*) ((uintptr_t)scan->reg + HART_BASE   + HART_SIZE   * scan->nohype_index);
+  } else {
+    printm("PLIC wired hart %d to wrong interrupt %d", 0, cpu_int);
+  }
+#else
   for (int index = 0; end - value > 0; ++index) {
     uint32_t phandle = bswap(value[0]);
     uint32_t cpu_int = bswap(value[1]);
@@ -438,6 +465,7 @@ static void plic_done(const struct fdt_scan_node *node, void *extra)
     }
     value += 2;
   }
+#endif
 #if 0
   printm("PLIC: prio %x devs %d\r\n", (uint32_t)(uintptr_t)plic_priorities, plic_ndevs);
   for (int i = 0; i < MAX_HARTS; ++i) {

@@ -3,6 +3,17 @@
 #ifndef RISCV_CSR_ENCODING_H
 #define RISCV_CSR_ENCODING_H
 
+#include "bits.h"
+
+//#define NOHYPE
+
+#ifdef NOHYPE
+#define vhartid 0x810
+#else
+#define vhartid mhartid
+#endif
+
+
 #define MSTATUS_UIE         0x00000001
 #define MSTATUS_SIE         0x00000002
 #define MSTATUS_HIE         0x00000004
@@ -192,7 +203,7 @@
 #ifdef __GNUC__
 
 #define read_csr(reg) ({ unsigned long __tmp; \
-  asm volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+  asm volatile ("csrr %0, " STR(reg) : "=r"(__tmp)); \
   __tmp; })
 
 #define write_csr(reg, val) ({ \
@@ -895,7 +906,11 @@
 #define CSR_MVENDORID 0xf11
 #define CSR_MARCHID 0xf12
 #define CSR_MIMPID 0xf13
+#ifdef NOHYPE
+#define CSR_MHARTID 0x810
+#else
 #define CSR_MHARTID 0xf14
+#endif
 #define CSR_CYCLEH 0xc80
 #define CSR_TIMEH 0xc81
 #define CSR_INSTRETH 0xc82

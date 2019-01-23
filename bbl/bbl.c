@@ -49,7 +49,7 @@ void boot_other_hart(uintptr_t unused __attribute__((unused)))
     mb();
   } while (!entry);
 
-  long hartid = read_csr(mhartid);
+  long hartid = read_csr(vhartid);
   if ((1 << hartid) & disabled_hart_mask) {
     while (1) {
       __asm__ volatile("wfi");
