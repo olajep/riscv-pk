@@ -62,7 +62,7 @@ static void uartlite_done(const struct fdt_scan_node *node, void *extra)
   uartlite[UART_LITE_CTRL_REG] = UART_LITE_RST_FIFO;
 }
 
-void query_uartlite(uintptr_t fdt)
+int query_uartlite(uintptr_t fdt)
 {
   struct fdt_cb cb;
   struct uartlite_scan scan;
@@ -74,4 +74,6 @@ void query_uartlite(uintptr_t fdt)
   cb.extra = &scan;
 
   fdt_scan(fdt, &cb);
+
+  return uartlite != NULL;
 }

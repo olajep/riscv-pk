@@ -24,16 +24,16 @@ void __attribute__((noreturn)) bad_trap(uintptr_t* regs, uintptr_t dummy, uintpt
 
 static uintptr_t mcall_console_putchar(uint8_t ch)
 {
-  uartlite_putchar(ch);
-  /*
   if (uart) {
     uart_putchar(ch);
+  } else if (uartlite) {
+    uartlite_putchar(ch);
   } else if (uart16550) {
     uart16550_putchar(ch);
   } else if (htif) {
     htif_console_putchar(ch);
   }
-  */
+
   return 0;
 }
 
@@ -69,11 +69,10 @@ static void send_ipi(uintptr_t recipient, int event)
 
 static uintptr_t mcall_console_getchar()
 {
-  return uartlite_getchar();
-
-  /*
   if (uart) {
     return uart_getchar();
+  } else if (uartlite) {
+    return uartlite_getchar();
   } else if (uart16550) {
     return uart16550_getchar();
   } else if (htif) {
@@ -81,7 +80,6 @@ static uintptr_t mcall_console_getchar()
   } else {
     return '\0';
   }
-  */
 }
 
 static uintptr_t mcall_clear_ipi()

@@ -63,7 +63,7 @@ static void uart_done(const struct fdt_scan_node *node, void *extra)
   uart[UART_REG_RXCTRL] = UART_RXEN;
 }
 
-void query_uart(uintptr_t fdt)
+int query_uart(uintptr_t fdt)
 {
   struct fdt_cb cb;
   struct uart_scan scan;
@@ -75,4 +75,6 @@ void query_uart(uintptr_t fdt)
   cb.extra = &scan;
 
   fdt_scan(fdt, &cb);
+
+  return uart != NULL;
 }

@@ -61,7 +61,7 @@ static void uart16550_done(const struct fdt_scan_node *node, void *extra)
   uart16550[2] = 0xC7;    // Enable FIFO, clear them, with 14-byte threshold
 }
 
-void query_uart16550(uintptr_t fdt)
+int query_uart16550(uintptr_t fdt)
 {
   struct fdt_cb cb;
   struct uart16550_scan scan;
@@ -73,4 +73,6 @@ void query_uart16550(uintptr_t fdt)
   cb.extra = &scan;
 
   fdt_scan(fdt, &cb);
+
+  return uart16550 != NULL;
 }

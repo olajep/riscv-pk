@@ -174,10 +174,12 @@ void init_first_hart(uintptr_t hartid, uintptr_t dtb)
   }
 
   // Confirm console as early as possible
-  query_uartlite(dtb);
-  //query_uart(dtb);
-  //query_uart16550(dtb);
-  //query_htif(dtb);
+  do {
+    if (query_uart(dtb)) break;
+    if (query_uartlite(dtb)) break;
+    if (query_uart16550(dtb)) break;
+    if (query_htif(dtb)) break;
+  } while (0);
   printm("bbl loader\r\n");
   printm("SBI console now online\n");
   printm("line %d: hartid = %d, build time: %s %s\n", __LINE__, hartid, __TIME__, __DATE__);

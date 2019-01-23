@@ -18,6 +18,6 @@ extern volatile uint32_t* uart;
 
 void uart_putchar(uint8_t ch);
 int uart_getchar();
-void query_uart(uintptr_t dtb);
+int query_uart(uintptr_t dtb);
 
 #endif

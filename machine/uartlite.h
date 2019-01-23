@@ -7,6 +7,6 @@ extern volatile uint8_t* uartlite;
 
 void uartlite_putchar(uint8_t ch);
 int uartlite_getchar();
-void query_uartlite(uintptr_t dtb);
+int query_uartlite(uintptr_t dtb);
 
 #endif

@@ -125,7 +125,7 @@ static void htif_done(const struct fdt_scan_node *node, void *extra)
   htif = 1;
 }
 
-void query_htif(uintptr_t fdt)
+int query_htif(uintptr_t fdt)
 {
   struct fdt_cb cb;
   struct htif_scan scan;
@@ -137,4 +137,6 @@ void query_htif(uintptr_t fdt)
   cb.extra = &scan;
 
   fdt_scan(fdt, &cb);
+
+  return htif != 0;
 }
