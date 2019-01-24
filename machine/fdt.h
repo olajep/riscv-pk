@@ -75,6 +75,13 @@ extern uint64_t hart_mask;
 extern void* kernel_start;
 extern void* kernel_end;
 
+static inline uint32_t bswap(uint32_t x)
+{
+  uint32_t y = (x & 0x00FF00FF) <<  8 | (x & 0xFF00FF00) >>  8;
+  uint32_t z = (y & 0x0000FFFF) << 16 | (y & 0xFFFF0000) >> 16;
+  return z;
+}
+
 #ifdef PK_PRINT_DEVICE_TREE
 // Prints the device tree to the console as a DTS
 void fdt_print(uintptr_t fdt);
